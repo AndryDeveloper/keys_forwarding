@@ -1,34 +1,15 @@
-from tkinter import *
-from tkinter.ttk import *
+import tkinter as tk
 
-root = Tk()
+def ctrlEvent(event):
+    if(12==event.state and event.keysym=='c' ):
+        return
+    else:
+        return "break"
 
-root.geometry('100x100')
-
-style = Style()
-
-# Добавим стиль к каждой доступной кнопке
-# хотя мы не проходим стиль
-# для каждого виджета кнопки.
-
-style.configure('TButton', font=
-('calibri', 10, 'bold', 'underline'),
-                foreground='red')
-
-
-
-btn1 = Button(root, text='Quit !',
-
-              style='TButton',
-
-              command=root.destroy)
-
-btn1.grid(row=0, column=3, padx=100)
-
-
-
-btn2 = Button(root, text='Click me !', command=None)
-
-btn2.grid(row=1, column=3, pady=10, padx=100)
+root = tk.Tk()
+readOnlyText = tk.Text(root)
+readOnlyText.insert(1.0,"ABCDEF")
+readOnlyText.bind("<Key>", lambda e: ctrlEvent(e))
+readOnlyText.pack()
 
 root.mainloop()

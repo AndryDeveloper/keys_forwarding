@@ -12,6 +12,7 @@ server.bind(
 )
 
 server.listen()
+print('server listen')
 
 while True:
     conn, addr = server.accept()
@@ -27,6 +28,7 @@ while True:
                 keyboard.press(p)
             if r != '--':
                 keyboard.release(r)
+            print(p, r)
 
             conn.send(bytes(1))
             continue

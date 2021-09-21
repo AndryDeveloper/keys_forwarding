@@ -9,6 +9,7 @@ from time import sleep
 
 success = False
 save_conn = True
+focus = {}
 
 
 def client_connect(ip, port, keys):
@@ -85,21 +86,47 @@ def break_conn():
 
 def add_key():
     keys_lbl.append([Label(frame, text=f'key: {len(keys_lbl) + 1}'),
-                     Entry(frame, width=5),
+                     Entry(frame, width=5, state="readonly"),
                      Label(frame, text="to"),
-                     Entry(frame, width=5)
+                     Entry(frame, width=5, state="readonly")
                      ])
     keys_lbl[-1][0].grid(column=0, row=len(keys_lbl) + 1)
     keys_lbl[-1][1].grid(column=1, row=len(keys_lbl) + 1)
+    keys_lbl[-1][1].bind("<FocusIn>", in_focus_key)
+    keys_lbl[-1][1].bind("<FocusOut>", out_focus_key)
     keys_lbl[-1][2].grid(column=2, row=len(keys_lbl) + 1)
     keys_lbl[-1][3].grid(column=3, row=len(keys_lbl) + 1)
+    keys_lbl[-1][3].bind("<FocusIn>", in_focus_key)
+    keys_lbl[-1][3].bind("<FocusOut>", out_focus_key)
 
     add_key.grid(column=0, row=len(keys_lbl)+2)
 
 
+def start_listening_keys(widget):
+    while focus[str(widget)]:
+        k = keyboard.read_key()
+        if focus[str(widget)]:
+            widget.config(state="normal")
+            widget.delete(0, END)
+            widget.insert(0, k)
+            widget.config(state="readonly")
+
+
+def in_focus_key(event):
+    global focus
+    focus[str(event.widget)] = True
+
+    th = Thread(target=start_listening_keys, args=(event.widget,))
+    th.start()
+
+
+def out_focus_key(event):
+    global focus
+    focus[str(event.widget)] = False
+
+
 window = Tk()
 window.title("Client")
-# window.geometry('800x600')
 
 frame = Frame(window)
 frame.pack()
