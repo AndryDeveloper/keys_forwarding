@@ -84,7 +84,7 @@ def break_conn():
     mes.config(text='Connection break')
 
 
-def add_key():
+def add_key_f():
     keys_lbl.append([Label(frame, text=f'key: {len(keys_lbl) + 1}'),
                      Entry(frame, width=5, state="readonly"),
                      Label(frame, text="to"),
@@ -99,7 +99,32 @@ def add_key():
     keys_lbl[-1][3].bind("<FocusIn>", in_focus_key)
     keys_lbl[-1][3].bind("<FocusOut>", out_focus_key)
 
-    add_key.grid(column=0, row=len(keys_lbl)+2)
+    key_frame.grid(column=0, row=len(keys_lbl)+2)
+
+
+def add_config():
+    path = 'config_example.txt'
+
+    with open(path) as f:
+        ip, port, keys = f.read().split()
+        ip, port, keys = ip.split('=')[1], port.split('=')[1], keys.split('=')[1]
+        keys = {k.split(',')[0]: k.split(',')[1] for k in keys.split(';')}
+    ip_field.insert(0, ip)
+    port_field.insert(0, port)
+    for k in keys:
+        add_key_f()
+        keys_lbl[-1][1].config(state="normal")
+        keys_lbl[-1][3].config(state="normal")
+
+        keys_lbl[-1][1].insert(0, k)
+        keys_lbl[-1][3].insert(0, keys[k])
+
+        keys_lbl[-1][1].config(state="readonly")
+        keys_lbl[-1][3].config(state="readonly")
+
+
+def save_config():
+    pass
 
 
 def start_listening_keys(widget):
@@ -147,8 +172,14 @@ lbl_key = Label(frame, text="key binds:")
 lbl_key.grid(column=0, row=1)
 
 keys_lbl = []
-add_key = Button(frame, text="Add key", command=add_key)
-add_key.grid(column=0, row=2)
+key_frame = Frame(frame)
+key_frame.grid(column=0, row=2)
+add_key = Button(key_frame, text="Add key", command=add_key_f)
+add_key.grid(column=0, row=0)
+add_conf = Button(key_frame, text="Add config", command=add_config)
+add_conf.grid(column=1, row=0)
+save_conf = Button(key_frame, text="Save config", command=save_config)
+save_conf.grid(column=2, row=0)
 
 conn = Button(frame, text="Connect!", command=connect)
 conn.grid(column=4, row=0)
