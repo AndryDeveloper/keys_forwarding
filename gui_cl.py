@@ -1,4 +1,5 @@
 from tkinter import *
+from tkinter import filedialog
 from tkinter.ttk import *
 import re
 import socket
@@ -103,7 +104,10 @@ def add_key_f():
 
 
 def add_config():
-    path = 'config_example.txt'
+    path = filedialog.askopenfilename(
+        filetypes=(("TXT files", "*.txt"),
+                   ("All files", "*.*"))
+    )
 
     with open(path) as f:
         ip, port, keys = f.read().split()
@@ -124,7 +128,15 @@ def add_config():
 
 
 def save_config():
-    pass
+    path = filedialog.askdirectory()
+    ip, port = 'ip=' + ip_field.get(), 'port=' + port_field.get()
+    keys = 'keys='
+    for i in range(len(keys_lbl)):
+        keys += keys_lbl[i][1].get() + ',' + keys_lbl[i][3].get()
+        if i != len(keys_lbl) - 1:
+            keys += ';'
+    with open(path + '/config.txt', 'w') as f:
+        f.write(ip + '\n' + port + '\n' + keys)
 
 
 def start_listening_keys(widget):
